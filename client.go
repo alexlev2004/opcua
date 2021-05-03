@@ -26,9 +26,9 @@ import (
 )
 
 // GetEndpoints returns the available endpoint descriptions for the server.
-func GetEndpoints(endpoint string) ([]*ua.EndpointDescription, error) {
+func GetEndpoints(ctx context.Context, endpoint string) ([]*ua.EndpointDescription, error) {
 	c := NewClient(endpoint, AutoReconnect(false))
-	if err := c.Dial(context.Background()); err != nil {
+	if err := c.Dial(ctx); err != nil {
 		return nil, err
 	}
 	defer c.Close()
@@ -187,10 +187,6 @@ const (
 
 // Connect establishes a secure channel and creates a new session.
 func (c *Client) Connect(ctx context.Context) (err error) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
 	if c.sechan != nil {
 		return errors.Errorf("already connected")
 	}
